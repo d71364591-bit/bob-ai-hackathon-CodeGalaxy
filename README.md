@@ -1,4 +1,4 @@
-# 🚀 [Your Project Title Here]
+# 🚀 AI based Industry worker safety system 
 
 > ⚠️ **Replace everything in `[ ]` brackets with your actual content before submission.**
 
@@ -8,10 +8,10 @@
 
 | Field | Value |
 |---|---|
-| **Team Name** | [Your Team Name] |
+| **Team Name** | CodeGalaxy |
 | **Track** | [AI / DevOps / Sustainability / Open] |
-| **Team Lead** | [Name] — [email@ibm.com] |
-| **Members** | [Name 1], [Name 2], [Name 3] |
+| **Team Lead** | Dhiren Parekh — 25ec066@charusat.edu.in |
+| **Members** | Dharmi Makadia, Pari Satasiya, Sej Paija |
 
 ---
 
@@ -19,7 +19,9 @@
 
 > In 2–3 sentences: What problem does your project solve? Who experiences this problem?
 
-[Describe the real-world problem your project addresses. Be specific about who the user is and what pain point they face.]
+Industrial workers, especially those working in hazardous areas such as factories, construction sites, and chemical plants, face safety risks because supervisors often cannot know a worker’s real-time location, distance, or movement during emergencies. Existing solutions such as manual monitoring, CCTV, and GPS-based tracking can be costly, have limited indoor accuracy, or fail to provide reliable worker-level proximity information; therefore, a low-cost BLE-based system is needed to provide real-time worker tracking, distance estimation, and directional alerts to enable faster emergency response and improve workplace safety.
+
+
 
 ---
 
@@ -27,17 +29,18 @@
 
 > In 2–3 sentences: What did you build? How does it solve the problem above?
 
-[Describe your solution clearly. Explain the core mechanism — what makes it work.]
+We built a low-cost BLE-based worker tracking system in which ESP32 worker tags continuously broadcast worker ID and status, while multiple ESP32 gateways measure RSSI and convert it into an estimated distance and direction, enabling real-time proximity monitoring without relying on GPS. The system uses multiple gateways instead of a single receiver to compare signal strength and determine the worker’s relative position, while filtering RSSI readings to reduce fluctuations; supervisors can view the worker’s location, distance, direction, and safety status through a live monitoring dashboard.
+
 
 ---
 
 ## ✨ Key Features
 
-- **Feature 1:** [Brief description — e.g., "Real-time anomaly detection using watsonx.ai"]
-- **Feature 2:** [Brief description]
-- **Feature 3:** [Brief description]
-- **Feature 4:** [Optional]
-- **Feature 5:** [Optional]
+- **Feature 1:** Tracks workers using BLE-enabled ESP32 worker tags and a gateway
+- **Feature 2:** Uses RSSI (Received Signal Strength Indicator) to estimate the distance between the worker and gateway in meters/centimeters.
+- **Feature 3:** Displays worker information, status, RSSI, and estimated distance in real time through a web dashboard.
+- **Feature 4:** Monitors worker status such as NORMAL and can be extended for warning/emergency conditions. Also monitors battery lavel
+- **Feature 5:** Built around affordable ESP32 boards and can be expanded to support multiple workers.
 
 ---
 
@@ -45,11 +48,10 @@
 
 | Category | Technologies |
 |---|---|
-| **Languages** | [e.g., Python, TypeScript] |
-| **Frameworks** | [e.g., FastAPI, React] |
-| **IBM Technologies** | [e.g., watsonx.ai, IBM Bob, IBM Cloud] |
-| **Databases** | [e.g., PostgreSQL, Redis] |
-| **Other** | [e.g., Docker, GitHub Actions] |
+| **Languages** | Python, C++, HTML, Javascript, CSS |
+| **Frameworks** | Flask, Flask-SocketIO, Python serial library (pyserial) |
+| **IBM Technologies** | watsonx.ai |
+| **Other** | GitHub |
 
 ---
 
