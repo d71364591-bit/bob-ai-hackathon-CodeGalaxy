@@ -110,14 +110,14 @@ cp .env.example .env
 
 > Be honest — judges appreciate transparency over overclaiming.
 
-- [Limitation 1: e.g., "Authentication is mocked — not production-ready"]
-- [Limitation 2: e.g., "Only tested on Chrome"]
-- [Limitation 3: e.g., "Feature X is scaffolded but not fully implemented"]
+- BLE is effective for small industrial areas but may have limited reliability and coverage in very large industrial facilities.
+- Monitoring a large industrial facility with many workers and zones would require multiple gateways and a more robust network infrastructure.
+- Real-time monitoring may be interrupted if the gateway, network, serial connection, or server experiences a failure.
 
 ---
 
 ## 🏅 What We're Most Proud Of
 
-[Tell the judges what part of your submission is strongest and worth paying close attention to.]
+The real-time worker tracking and safety monitoring is the strongest part of the project. The combination of BLE-based worker identification, RSSI-based distance estimation, gateway processing, and a live dashboard demonstrates a practical end-to-end solution rather than just a theoretical concept. 
 
 ---
