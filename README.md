@@ -79,8 +79,8 @@ We built a low-cost BLE-based worker tracking system in which ESP32 worker tags 
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/[your-repo].git
-cd [your-repo]
+git clone https://github.com/DhirenParekh/bob-ai-hackathon-CodeGalaxy.git
+cd bob-ai-hackathon-CodeGalaxy
 
 # 2. Install dependencies
 [your install command here]
