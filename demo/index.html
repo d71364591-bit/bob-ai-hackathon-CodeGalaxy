@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEGIS-SHIELD™ | AI Industrial Worker Safety Command Center</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Custom SCADA Dashboard CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- =========================================================
+             TOP NAVIGATION & STATUS BAR
+        ========================================================= -->
+        <header class="top-nav">
+            <div class="brand-section">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-shield-halved pulse-glow"></i>
+                </div>
+                <div class="brand-info">
+                    <h1>AEGIS-SHIELD™ <span>v2.5 SCADA</span></h1>
+                    <p>AI-Powered Industrial Worker Safety & 2D BLE Positioning Center</p>
+                </div>
+            </div>
+
+            <!-- Hardware & Live Connectivity Badges -->
+            <div class="status-pills">
+                <div class="pill" id="serialStatusPill">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>SERIAL:</span>
+                    <strong id="serialStatusText">DETECTING...</strong>
+                </div>
+                <div class="pill" id="socketStatusPill">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                    <span>TELEMETRY:</span>
+                    <strong id="socketStatusText">CONNECTING</strong>
+                </div>
+                <button class="pill interactive-pill" id="simToggleBtn" title="Toggle Demo Simulation vs Real Hardware">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>MODE:</span>
+                    <strong id="simModeText">SIMULATION (ACTIVE)</strong>
+                </button>
+                <button class="pill interactive-pill sound-pill" id="audioToggleBtn" title="Toggle Alarm Siren Audio">
+                    <i class="fa-solid fa-volume-high" id="audioIcon"></i>
+                    <span id="audioText">SIREN: ARMED</span>
+                </button>
+            </div>
+
+            <!-- Emergency Actions Group -->
+            <div class="emergency-actions">
+                <button class="btn btn-fire" id="btnFireAlarm" title="Trigger Fire Evacuation Alarm">
+                    <i class="fa-solid fa-fire-flame-curved"></i> FIRE ALARM
+                </button>
+                <button class="btn btn-electric" id="btnShortCircuit" title="Report Electrical Short Circuit">
+                    <i class="fa-solid fa-bolt-lightning"></i> SHORT CIRCUIT
+                </button>
+                <button class="btn btn-danger" id="btnEvacuation" title="Trigger General Plant Evacuation">
+                    <i class="fa-solid fa-person-running"></i> EVACUATE
+                </button>
+                <button class="btn btn-reset" id="btnResetEmergency" title="Clear Emergency & Restore Normal State">
+                    <i class="fa-solid fa-check-double"></i> ALL CLEAR
+                </button>
+            </div>
+        </header>
+
+        <!-- =========================================================
+             ACTIVE EMERGENCY BANNER (PULSING MARQUEE)
+        ========================================================= -->
+        <div class="emergency-banner hidden" id="emergencyBanner">
+            <div class="emergency-content">
+                <i class="fa-solid fa-triangle-exclamation emergency-icon-bounce"></i>
+                <div class="emergency-text">
+                    <h3 id="emergencyTitle">CRITICAL PLANT EVACUATION ACTIVE</h3>
+                    <p id="emergencyDesc">All personnel must immediately proceed to designated Emergency Muster Point (Station A).</p>
+                </div>
+                <div class="emergency-timer" id="emergencyTimer">00:00</div>
+                <button class="btn btn-sm btn-outline" id="bannerDismissBtn">Acknowledge</button>
+            </div>
+        </div>
+
+        <!-- =========================================================
+             KPI SUMMARY CARDS
+        ========================================================= -->
+        <section class="kpi-grid">
+            <div class="kpi-card card-cyan">
+                <div class="kpi-header">
+                    <span class="kpi-title">Active Personnel</span>
+                    <i class="fa-solid fa-users-gear kpi-icon"></i>
+                </div>
+                <div class="kpi-body">
+                    <h2 id="kpiTotalWorkers">3</h2>
+                    <span class="kpi-badge badge-neutral">100% Badged</span>
+                </div>
+                <div class="kpi-footer">
+                    <i class="fa-solid fa-signal text-cyan"></i> ESP32 BLE Beacon Active
+                </div>
+            </div>
+
+            <div class="kpi-card card-emerald">
+                <div class="kpi-header">
+                    <span class="kpi-title">Safe Zone Personnel</span>
+                    <i class="fa-solid fa-shield-heart kpi-icon"></i>
+                </div>
+                <div class="kpi-body">
+                    <h2 id="kpiSafeWorkers">2</h2>
+                    <span class="kpi-badge badge-success" id="kpiSafePct">67% Safe</span>
+                </div>
+                <div class="kpi-footer">
+                    <i class="fa-solid fa-circle-check text-emerald"></i> Normal Operations
+                </div>
+            </div>
+
+            <div class="kpi-card card-amber">
+                <div class="kpi-header">
+                    <span class="kpi-title">Machinery Caution Zone</span>
+                    <i class="fa-solid fa-robot kpi-icon"></i>
+                </div>
+                <div class="kpi-body">
+                    <h2 id="kpiCautionWorkers">1</h2>
+                    <span class="kpi-badge badge-warning">Caution Alert</span>
+                </div>
+                <div class="kpi-footer">
+                    <i class="fa-solid fa-triangle-exclamation text-amber"></i> Arc-Welding Perimeter
+                </div>
+            </div>
+
+            <div class="kpi-card card-crimson">
+                <div class="kpi-header">
+                    <span class="kpi-title">Geofence Violations</span>
+                    <i class="fa-solid fa-radiation kpi-icon"></i>
+                </div>
+                <div class="kpi-body">
+                    <h2 id="kpiDangerWorkers">0</h2>
+                    <span class="kpi-badge badge-danger" id="kpiHazardBadge">Zero Breaches</span>
+                </div>
+                <div class="kpi-footer">
+                    <i class="fa-solid fa-skull-crossbones text-crimson"></i> Toxic / High-Volt Area
+                </div>
+            </div>
+
+            <div class="kpi-card card-blue">
+                <div class="kpi-header">
+                    <span class="kpi-title">Mean Signal Strength</span>
+                    <i class="fa-solid fa-tower-broadcast kpi-icon"></i>
+                </div>
+                <div class="kpi-body">
+                    <h2 id="kpiAvgRssi">-68 <small>dBm</small></h2>
+                    <span class="kpi-badge badge-info">2 Gateways</span>
+                </div>
+                <div class="kpi-footer">
+                    <i class="fa-solid fa-wave-square text-blue"></i> High Accuracy Multilateration
+                </div>
+            </div>
+
+            <div class="kpi-card card-violet" id="threatLevelCard">
+                <div class="kpi-header">
+                    <span class="kpi-title">Plant Threat Level</span>
+                    <i class="fa-solid fa-gauge-high kpi-icon"></i>
+                </div>
+                <div class="kpi-body">
+                    <h2 id="kpiThreatLevel">NORMAL</h2>
+                    <span class="kpi-badge badge-success" id="kpiThreatBadge">Condition Green</span>
+                </div>
+                <div class="kpi-footer">
+                    <i class="fa-solid fa-microchip-ai text-violet"></i> AI Risk Model Active
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             MAIN COMMAND CENTER: FLOOR PLAN & TELEMETRY PANELS
+        ========================================================= -->
+        <main class="main-layout">
+            <!-- LEFT COLUMN: 2D Floor Plan & Worker Roster -->
+            <div class="layout-left">
+                <!-- 2D SVG Factory Floor Plan Card -->
+                <div class="panel floorplan-panel">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <div>
+                                <h3>Plant Alpha - 2D Live Localization Matrix</h3>
+                                <p>Interactive dual-gateway trilateration & industrial geofencing grid</p>
+                            </div>
+                        </div>
+                        <div class="panel-controls">
+                            <button class="btn btn-sm btn-ghost" id="toggleGridBtn" title="Toggle Grid overlay">
+                                <i class="fa-solid fa-border-all"></i> Grid
+                            </button>
+                            <button class="btn btn-sm btn-ghost" id="toggleRaysBtn" title="Toggle Trilateration Distance Rays">
+                                <i class="fa-solid fa-arrows-to-dot"></i> Trilateration Rays
+                            </button>
+                            <button class="btn btn-sm btn-ghost" id="toggleRadarBtn" title="Toggle Gateway Coverage Radii">
+                                <i class="fa-solid fa-bullseye"></i> Gateway Range
+                            </button>
+                            <button class="btn btn-sm btn-ghost" id="resetZoomBtn" title="Reset Viewport">
+                                <i class="fa-solid fa-arrows-rotate"></i> Center
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SVG Factory Map Container -->
+                    <div class="svg-container">
+                        <svg id="factoryFloor" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <!-- Grid Pattern -->
+                                <pattern id="subgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+                                </pattern>
+                                <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+                                    <rect width="100" height="100" fill="url(#subgrid)" />
+                                    <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
+                                </pattern>
+
+                                <!-- Hazard Stripes Pattern -->
+                                <pattern id="hazardStripesRed" width="24" height="24" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                                    <line x1="0" y1="0" x2="0" y2="24" stroke="rgba(239,68,68,0.25)" stroke-width="12" />
+                                </pattern>
+                                <pattern id="hazardStripesOrange" width="24" height="24" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                                    <line x1="0" y1="0" x2="0" y2="24" stroke="rgba(249,115,22,0.25)" stroke-width="12" />
+                                </pattern>
+                                <pattern id="cautionStripesYellow" width="24" height="24" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                                    <line x1="0" y1="0" x2="0" y2="24" stroke="rgba(234,179,8,0.2)" stroke-width="12" />
+                                </pattern>
+
+                                <!-- Pulse & Radar Gradients -->
+                                <radialGradient id="gwRadarGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="rgba(56,189,248,0.3)" />
+                                    <stop offset="70%" stop-color="rgba(56,189,248,0.08)" />
+                                    <stop offset="100%" stop-color="rgba(56,189,248,0)" />
+                                </radialGradient>
+                                <radialGradient id="beaconPulseGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="rgba(16,185,129,0.6)" />
+                                    <stop offset="100%" stop-color="rgba(16,185,129,0)" />
+                                </radialGradient>
+                            </defs>
+
+                            <!-- Floor Background -->
+                            <rect width="1000" height="600" fill="#0b1120" rx="14" />
+                            <!-- Grid Overlay -->
+                            <rect id="gridOverlay" width="1000" height="600" fill="url(#grid)" />
+
+                            <!-- ============================================
+                                 PLANT ZONES
+                            ============================================ -->
+                            <!-- High Voltage Substation (Danger) -->
+                            <g class="zone-group" id="zoneHighVoltage">
+                                <rect x="40" y="40" width="280" height="220" rx="10" fill="rgba(249,115,22,0.08)" stroke="#f97316" stroke-width="2" stroke-dasharray="6,4" />
+                                <rect x="40" y="40" width="280" height="220" rx="10" fill="url(#hazardStripesOrange)" />
+                                <text x="60" y="75" fill="#f97316" font-size="14" font-weight="700" letter-spacing="1">⚡ HIGH VOLTAGE SUBSTATION</text>
+                                <text x="60" y="95" fill="#94a3b8" font-size="11">33kV Transformers / Danger of Death</text>
+                            </g>
+
+                            <!-- Toxic Chemical Storage (Danger) -->
+                            <g class="zone-group" id="zoneChemHazard">
+                                <rect x="680" y="40" width="280" height="220" rx="10" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="2" stroke-dasharray="6,4" />
+                                <rect x="680" y="40" width="280" height="220" rx="10" fill="url(#hazardStripesRed)" />
+                                <text x="700" y="75" fill="#ef4444" font-size="14" font-weight="700" letter-spacing="1">☣ TOXIC CHEMICAL STORAGE</text>
+                                <text x="700" y="95" fill="#94a3b8" font-size="11">Corrosive Solvents / Hazmat Zone</text>
+                            </g>
+
+                            <!-- Robotic Arc-Welding Cell (Caution) -->
+                            <g class="zone-group" id="zoneRoboticCell">
+                                <rect x="370" y="120" width="260" height="200" rx="10" fill="rgba(234,179,8,0.06)" stroke="#eab308" stroke-width="2" stroke-dasharray="8,4" />
+                                <rect x="370" y="120" width="260" height="200" rx="10" fill="url(#cautionStripesYellow)" />
+                                <text x="390" y="150" fill="#eab308" font-size="13" font-weight="700" letter-spacing="1">🤖 ROBOTIC WELDING CELL</text>
+                                <text x="390" y="170" fill="#94a3b8" font-size="11">Automated 6-Axis Arms / Caution</text>
+                            </g>
+
+                            <!-- Main Assembly & Packaging (Safe) -->
+                            <g class="zone-group" id="zoneAssembly">
+                                <rect x="200" y="380" width="600" height="180" rx="10" fill="rgba(16,185,129,0.05)" stroke="#10b981" stroke-width="1.5" />
+                                <text x="220" y="410" fill="#10b981" font-size="13" font-weight="700" letter-spacing="1">🏭 MAIN ASSEMBLY & PACKAGING</text>
+                                <text x="220" y="430" fill="#64748b" font-size="11">Standard Workstation & Inspection Floor</text>
+                            </g>
+
+                            <!-- Emergency Muster Point (Safe) -->
+                            <g class="zone-group" id="zoneMuster">
+                                <rect x="40" y="380" width="120" height="180" rx="10" fill="rgba(6,182,212,0.08)" stroke="#06b6d4" stroke-width="2" />
+                                <text x="50" y="410" fill="#06b6d4" font-size="12" font-weight="700">🚩 MUSTER</text>
+                                <text x="50" y="430" fill="#06b6d4" font-size="12" font-weight="700">STATION A</text>
+                                <text x="50" y="450" fill="#94a3b8" font-size="10">Safe Exit Area</text>
+                            </g>
+
+                            <!-- ============================================
+                                 GATEWAY RADAR & COVERAGE RINGS
+                            ============================================ -->
+                            <g id="gatewayCoverageGroup">
+                                <!-- Gateway 1 Radar -->
+                                <circle cx="160" cy="480" r="220" fill="url(#gwRadarGrad)" class="radar-circle" />
+                                <circle cx="160" cy="480" r="220" fill="none" stroke="rgba(56,189,248,0.3)" stroke-width="1" stroke-dasharray="4,6" />
+                                <!-- Gateway 2 Radar -->
+                                <circle cx="840" cy="480" r="220" fill="url(#gwRadarGrad)" class="radar-circle" />
+                                <circle cx="840" cy="480" r="220" fill="none" stroke="rgba(56,189,248,0.3)" stroke-width="1" stroke-dasharray="4,6" />
+                            </g>
+
+                            <!-- ============================================
+                                 TRILATERATION DISTANCE RAYS (DYNAMIC)
+                            ============================================ -->
+                            <g id="trilaterationRaysGroup"></g>
+
+                            <!-- ============================================
+                                 GATEWAY NODES (HARDWARE RECEIVERS)
+                            ============================================ -->
+                            <!-- Gateway 1 -->
+                            <g class="gateway-node" transform="translate(160, 480)">
+                                <circle r="18" fill="#0284c7" stroke="#38bdf8" stroke-width="3" />
+                                <circle r="6" fill="#ffffff" />
+                                <text x="0" y="34" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle">GATEWAY 1 (A)</text>
+                                <text x="0" y="48" fill="#94a3b8" font-size="10" text-anchor="middle">ESP32 RX-1</text>
+                            </g>
+
+                            <!-- Gateway 2 -->
+                            <g class="gateway-node" transform="translate(840, 480)">
+                                <circle r="18" fill="#0284c7" stroke="#38bdf8" stroke-width="3" />
+                                <circle r="6" fill="#ffffff" />
+                                <text x="0" y="34" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle">GATEWAY 2 (B)</text>
+                                <text x="0" y="48" fill="#94a3b8" font-size="10" text-anchor="middle">ESP32 RX-2</text>
+                            </g>
+
+                            <!-- ============================================
+                                 WORKER BREADCRUMB TRAILS & NODES
+                            ============================================ -->
+                            <g id="workerTrailsGroup"></g>
+                            <g id="workersGroup"></g>
+                        </svg>
+
+                        <!-- Floor Plan Legend -->
+                        <div class="floorplan-legend">
+                            <div class="legend-item"><span class="legend-dot dot-safe"></span> Safe Assembly</div>
+                            <div class="legend-item"><span class="legend-dot dot-caution"></span> Machinery Zone</div>
+                            <div class="legend-item"><span class="legend-dot dot-danger"></span> Toxic / Voltage Hazard</div>
+                            <div class="legend-item"><span class="legend-dot dot-gw"></span> ESP32 Receiver Gateway</div>
+                            <div class="legend-item"><span class="legend-dot dot-worker"></span> Tracked Worker Beacon</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personnel Roster & Live Matrix Table -->
+                <div class="panel roster-panel">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <i class="fa-solid fa-clipboard-user"></i>
+                            <div>
+                                <h3>Floor Personnel Roster & Real-Time Telemetry</h3>
+                                <p>Live BLE RSSI, multilaterated distance, battery %, and geofence status</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-neutral" id="rosterCountBadge">3 Active Tags</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="roster-table">
+                            <thead>
+                                <tr>
+                                    <th>WORKER</th>
+                                    <th>ROLE / TRADE</th>
+                                    <th>CURRENT ZONE</th>
+                                    <th>GW1 RSSI / DIST</th>
+                                    <th>GW2 RSSI / DIST</th>
+                                    <th>BATTERY</th>
+                                    <th>SAFETY STATUS</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workerTableBody">
+                                <!-- Dynamic rows rendered by app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Analytics, Charts & Incident Log -->
+            <div class="layout-right">
+                <!-- Real-time RSSI & Distance Timeline Chart -->
+                <div class="panel chart-panel">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <div>
+                                <h3>Real-Time RSSI & Distance Stream</h3>
+                                <p>Live signal attenuation & path-loss distance tracking</p>
+                            </div>
+                        </div>
+                        <select id="chartWorkerSelect" class="select-sm">
+                            <option value="W001">Worker W001 (Marcus)</option>
+                            <option value="W002">Worker W002 (Elena)</option>
+                            <option value="W003">Worker W003 (David)</option>
+                        </select>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="rssiChart"></canvas>
+                    </div>
+                    <div class="chart-stats-row">
+                        <div class="chart-stat">
+                            <span>GW1 RSSI:</span>
+                            <strong id="statGw1Rssi">-- dBm</strong>
+                        </div>
+                        <div class="chart-stat">
+                            <span>GW2 RSSI:</span>
+                            <strong id="statGw2Rssi">-- dBm</strong>
+                        </div>
+                        <div class="chart-stat">
+                            <span>EST. DISTANCE:</span>
+                            <strong id="statDistance">-- m</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone Occupancy & Safety Exposure Distribution -->
+                <div class="panel chart-panel">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <div>
+                                <h3>Zone Safety Distribution</h3>
+                                <p>Headcount breakdown across factory security zones</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper chart-wrapper-pie">
+                        <canvas id="zoneChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Live Safety Event & Incident Audit Log -->
+                <div class="panel log-panel">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <i class="fa-solid fa-list-check"></i>
+                            <div>
+                                <h3>Live Incident & Security Audit Log</h3>
+                                <p>Real-time geofence violations, SOS signals & serial events</p>
+                            </div>
+                        </div>
+                        <div class="log-actions">
+                            <button class="btn btn-xs btn-ghost" id="clearLogsBtn" title="Clear log screen">Clear</button>
+                            <button class="btn btn-xs btn-ghost" id="exportLogsBtn" title="Export logs as JSON">Export</button>
+                        </div>
+                    </div>
+                    <div class="log-filters">
+                        <button class="filter-pill active" data-filter="ALL">ALL</button>
+                        <button class="filter-pill" data-filter="DANGER">DANGER</button>
+                        <button class="filter-pill" data-filter="WARNING">WARNING</button>
+                        <button class="filter-pill" data-filter="INFO">INFO</button>
+                    </div>
+                    <div class="log-stream" id="logStream">
+                        <!-- Dynamic event items rendered by app.js -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Bar -->
+        <footer class="bottom-footer">
+            <div>
+                <i class="fa-solid fa-shield"></i> AEGIS-SHIELD™ Industrial Safety IoT Platform
+                &bull; ESP32 BLE Beacon 2D RSSI Trilateration &bull; Path-loss Model $d=10^{(A-RSSI)/(10n)}$
+            </div>
+            <div id="footerTimestamp">SYSTEM INITIALIZED</div>
+        </footer>
+    </div>
+
+    <!-- External Libraries: Socket.IO & Chart.js -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <!-- Application Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
