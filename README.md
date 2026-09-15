@@ -100,7 +100,7 @@ cp .env.example .env
 | Artifact | Link |
 |---|---|
 | 📹 Demo Video | https://drive.google.com/file/d/1azUmfnrx_IgOaHWxbVAPd5faOccZ4bgY/view?usp=sharing(demo/demo-video-link.txt) |
-| 🌐 Live Demo | file:///C:/Users/d7136/OneDrive/Desktop/IBM/AEGIS-SHIELD-Standalone/AEGIS-SHIELD-Standalone/index.html(demo/live-demo-url.txt) |
+| 🌐 Live Demo | https://drive.google.com/file/d/1fshQq4EZSkyk0h19AjEm0AXpire3Xqmx/view?usp=sharing(demo/live-demo-url.txt) |
 | 🖼️ Screenshots | https://drive.google.com/file/d/1WepnMBzjRkTFtJQDut8-WOW8srbyIALe/view?usp=sharing(demo/screenshots/) |
 | 📊 Presentation | https://docs.google.com/presentation/d/17v7PpPH10eeyg_gpANWJxB3NSQbigTR5/edit?usp=sharing&ouid=101315250236731430598&rtpof=true&sd=true(presentation/) |
 
