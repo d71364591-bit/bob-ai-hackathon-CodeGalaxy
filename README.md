@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | **Team Name** | CodeGalaxy |
-| **Track** | [AI / DevOps / Sustainability / Open] |
+| **Track** | AI |
 | **Team Lead** | Dhiren Parekh — 25ec066@charusat.edu.in |
 | **Members** | Dharmi Makadia, Pari Satasiya, Sej Paija |
 
@@ -101,8 +101,8 @@ cp .env.example .env
 |---|---|
 | 📹 Demo Video | https://drive.google.com/file/d/1azUmfnrx_IgOaHWxbVAPd5faOccZ4bgY/view?usp=sharing(demo/demo-video-link.txt) |
 | 🌐 Live Demo | [See demo/live-demo-url.txt](demo/live-demo-url.txt) |
-| 🖼️ Screenshots | (demo/screenshots/) |
-| 📊 Presentation | [See presentation/slides.pdf](presentation/) |
+| 🖼️ Screenshots | https://drive.google.com/file/d/1O7Hv7W-9coeb0pzWIub2hL12dMV28SJ3/view?usp=sharing(demo/screenshots/) |
+| 📊 Presentation | https://docs.google.com/presentation/d/17v7PpPH10eeyg_gpANWJxB3NSQbigTR5/edit?usp=sharing&ouid=101315250236731430598&rtpof=true&sd=true(presentation/) |
 
 ---
 
