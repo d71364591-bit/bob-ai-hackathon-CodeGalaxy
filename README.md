@@ -1,4 +1,4 @@
-# 🚀 AI based Industry worker safety system 
+`# 🚀 AI based Industry worker safety system 
 
 > ⚠️ **Replace everything in `[ ]` brackets with your actual content before submission.**
 
@@ -90,7 +90,7 @@ cp .env.example .env
 # Edit .env with your values
 
 # 4. Run the project
-[your run command here]
+
 ```
 
 ---
@@ -100,7 +100,7 @@ cp .env.example .env
 | Artifact | Link |
 |---|---|
 | 📹 Demo Video | https://drive.google.com/file/d/1azUmfnrx_IgOaHWxbVAPd5faOccZ4bgY/view?usp=sharing(demo/demo-video-link.txt) |
-| 🌐 Live Demo | [See demo/live-demo-url.txt](demo/live-demo-url.txt) |
+| 🌐 Live Demo | file:///C:/Users/d7136/OneDrive/Desktop/IBM/BLE_Worker_Safety_Demo/index.html#dashboard(demo/live-demo-url.txt) |
 | 🖼️ Screenshots | https://drive.google.com/file/d/1O7Hv7W-9coeb0pzWIub2hL12dMV28SJ3/view?usp=sharing(demo/screenshots/) |
 | 📊 Presentation | https://docs.google.com/presentation/d/17v7PpPH10eeyg_gpANWJxB3NSQbigTR5/edit?usp=sharing&ouid=101315250236731430598&rtpof=true&sd=true(presentation/) |
 
